@@ -104,7 +104,7 @@ class CreatePurchasingTables extends Migration
 			$table->string('unitMeasurement', 50);  //Ед. измерения
 			$table->string('amount', 100);          //Количество (объем)
 			$table->string('Conditions', 500)
-				->nullable();     // Условия финансового обеспечения исполнения контракта (включая размер аванса )
+				->nullable();     // Условия финансового обеспечения исполнения контракта (включая размер аванса)
 			$table->string('method', 100);          //Способ размещения заказа
 			$table->string('changeRatio', 100);          //Обоснование внесения изменений
 		});
