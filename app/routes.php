@@ -15,3 +15,8 @@ Route::get('/', function()
 {
 	return View::make('hello');
 });
+
+Route::group(array('prefix' => 'v1/api'), function() {
+	Route::resource('purchaseStatus', 'Goros6\\Purchases\\Controllers\\Api\\PurchaseStatusController');
+});
+
