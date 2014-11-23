@@ -4,7 +4,7 @@ use Controller;
 use Goros6\Purchases\Models\PurchaseStatus;
 use Input;
 use Response;
-use Exception;
+use Validator;
 
 
 class PurchaseStatusController extends Controller {
@@ -17,29 +17,9 @@ class PurchaseStatusController extends Controller {
 	public function index()
 	{
 		//
-		try{
-			$statusCode = 200;
-			$response = [
-				'PurchaseStatuses'  => []
-			];
-
-			$purSt = PurchaseStatus::all();
-
-			foreach($purSt as $pS){
-
-				$response['PurchaseStatuses'][] = [
-					'id' => $pS->id,
-					'name' => $pS->name
-				];
-			}
-
-		}catch (Exception $e){
-			$statusCode = 400;
-		}finally{
-			var_dump($response);
-			return Response::json($response, $statusCode);
-		}
-
+		return [
+			'PurchaseStatuses' => PurchaseStatus::all()->toArray()
+		];
 	}
 
 
@@ -64,9 +44,20 @@ class PurchaseStatusController extends Controller {
 		//
 		$input = Input::all();
 		var_dump($input);
+
+		$val =  Validator::make($input,  array(
+			'name' => 'required|unique:purchaseStatuses,name'));
+		if ($val->fails())
+		{
+			var_dump($val->messages()->toArray());
+			return $val->messages()->toArray();
+		}
+
 		$purSt = new PurchaseStatus();
 		$purSt->name = $input['name'];
 		$purSt->save();
+
+		return $this->show($purSt->id);
 	}
 
 
@@ -79,22 +70,10 @@ class PurchaseStatusController extends Controller {
 	public function show($id)
 	{
 		//
-		try{
-			$purSt = PurchaseStatus::find($id);
-			$statusCode = 200;
-			$response = [
-				'PurchaseStatuses'  => ['id' => $purSt->id,
-				                        'name' => $purSt->name
-			]];
-		}catch (Exception $e){
-			$statusCode = 400;
-			$response = [
-				"error" => "Status doesn`t exists"
-			];
-		}finally{
-			var_dump($response);
-			return Response::json($response, $statusCode);
-		}
+		$purSt = PurchaseStatus::findOrFail((int)$id); // Добвил преобразование в инт, чтобы ввод символьный ошибок не вызвал
+		return [
+			'PurchaseStatus' => $purSt->toArray()
+		];
 	}
 
 
